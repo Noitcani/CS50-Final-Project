@@ -15,3 +15,11 @@
 
 ### New Tech
 - jQuery
+- Setting up venv for app
+
+
+## venv commands
+```powershell
+set-executionpolicy -scope currentuser remotesigned
+.\quiez_app\Scripts\activate
+```

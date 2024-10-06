@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+<div class="container text-center" style="width: 400px;">
+    <form class="form-signin w-100 m-auto" action="/register" method="post">
+        <div class="parent">
+            <div class="child" style="margin-right:0.5rem; margin-bottom: 0.5rem;"><i class="bi bi-clipboard-check-fill h3"></i></div>  
+            <div class="child"><h1>QUI-EZ</h1></div>                        
+          </div>
+
+        <h1 class="h3 mb-3 fw-normal">Register Account</h1>
+
+        <div class="form-floating">
+            <input name="username" type="text" class="form-control" id="floatingInput" placeholder="Usename">
+            <label for="floatingInput">Username</label>
+        </div>
+
+        <div class="form-floating">
+            <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+        </div>
+
+        <div class="form-floating">
+            <input name="confirmation" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Confirm Password</label>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2" type="submit" style="margin-top: 10%;">Register</button>
+        <p class="mt-5 mb-3 text-body-secondary">© 2024 QUI-EZ</p>
+    </form>
+</div>
+{% endblock %}
