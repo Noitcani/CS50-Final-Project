@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create
+{% endblock %}
+
+{% block head_scripts %}
+<script>
+    var current_questions_count = 0;
+
+    function add_question(){
+        const question = document.createElement("div");
+        const question_question = document.createElement('input')
+        question.id = "question" + current_questions_count;
+        question.className = "container";
+        question_question.type = "text";
+        question_question.className = "form-control"
+        question_question.name = "question" + current_questions_count;
+        question_question.required = true;
+        question_question.placeholder = "Quiz Question";
+        
+        question.append(question_question);
+        $("#questions_block").append(question);
+        current_questions_count += 1;
+    };
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="container text-center" style="margin-bottom: 3%;">
+    <h1>Create Qui-ez</h1>
+</div>
+
+<div class="container text-center" style="align-content: center; max-width: 60%;">
+    <form action="/create" method="post"></form>
+      <div class="question-name container" style="margin-bottom: 5%;">
+        <h2>Qui-ez Name</h2>
+        <input name="quiz_name" type="text" class="form-control" id="quiz_name" placeholder="Quiz Name" value="" required>
+      </div>
+
+      <hr>
+
+      <div class="container" style="margin-bottom: 5%;">
+        <h2>Questions</h2>
+      </div>
+
+      <!-- Questions Block -->
+      <div id="questions_block" class="row g-3 my-4">
+        <div class="question-div container" id="question-div-prototype">
+          <div class="question-header row">
+            <div class="col-md-1 border border-primary" id="q0_sn"><h1>1</h1></div>
+            <div class="col-md-11 border border-primary" id="q0_qs">
+              <input name="q0_qs" type="text" class="form-control question_question no-border" id="q0_qs" placeholder="Question Here" value="" required>
+            </div>
+          </div>
+
+          <div class="question-answers row border border-top-0 border-bottom-0 border-primary py-3">
+            <div class="col-md-3">
+              <input name="q0_ans0" type="text" class="form-control question_answer border-success" id="q0_ans0" placeholder="Correct Answer Here" value="" required>
+            </div>
+            <div class="col-md-3">
+              <input name="q0_ans1" type="text" class="form-control question_answer border-danger" id="q0_ans1" placeholder="Wrong Answer 1" value="" required>
+            </div>
+            <div class="col-md-3">
+              <input name="q0_ans2" type="text" class="form-control question_answer border-danger" id="q0_ans2" placeholder="Wrong Answer 1" value="" required>
+            </div>
+            <div class="col-md-3">
+              <input name="q0_ans3" type="text" class="form-control question_answer border-danger" id="q0_ans3" placeholder="Wrong Answer 1" value="" required>
+            </div>
+          </div>
+
+          <div class="delete-question row">
+            <div class="col border border-primary">
+              <button type="button" class="btn btn-danger my-3"> Delete Question</button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <button class="w-35 btn btn-info btn-lg my-4" type="button" onclick="add_question()">Add Question</button>
+
+      <hr class="my-4">
+
+      <button class="w-100 btn btn-primary btn-lg my-4" type="submit">Create Qui-ez</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block footer_scripts %}
+{% endblock %}

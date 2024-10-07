@@ -33,4 +33,4 @@ def create_all_tables(cursor):
 
 
 def dict_from_row(row):
-    return dict(zip(row.keys(), row)) 
+    return dict(zip(row.keys(), row))

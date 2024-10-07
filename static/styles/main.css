@@ -5,6 +5,15 @@ h1, h2{
     font-style: normal;
 }
 
+hr {
+    overflow: visible; /* For IE */
+    padding: 0;
+    border: none;
+    border-top: medium double #333;
+    color: #333;
+    text-align: center;
+}
+
 .parent {
     margin: 1rem;
     text-align: center;
@@ -13,4 +22,17 @@ h1, h2{
 .child {
     display: inline-block;
     vertical-align: middle;
+}
+
+.form-label {
+    font-weight: 700;
+}
+
+.question_answer {
+    font-size: x-small;
+}
+
+.no-border, .no-border:focus{
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
 }

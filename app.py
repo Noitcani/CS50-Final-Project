@@ -117,5 +117,13 @@ def register():
     return render_template("/register.html")
 
 
+@app.route("/create", methods=["GET", "POST"])
+@login_required
+def create():
+    if request.method == "POST":
+        return redirect("/")
+    return render_template("create.html")
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

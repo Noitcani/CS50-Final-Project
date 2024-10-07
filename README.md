@@ -13,9 +13,13 @@
 - **View**: HTML/CSS + JavaScript with Jinja Templating
 - **Controller**: Python Flask
 
-### New Tech
+### More Python + Flask
 - jQuery
 - Setting up venv for app
+- Figuring out `sqlite3` python library instead of using `cs50` helpers
+
+## More Bootstrap
+- More Bootstrap elements usage
 
 
 ## venv commands
