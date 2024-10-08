@@ -6,23 +6,45 @@
 
 {% block head_scripts %}
 <script>
-    var current_questions_count = 0;
 
-    function add_question(){
-        const question = document.createElement("div");
-        const question_question = document.createElement('input')
-        question.id = "question" + current_questions_count;
-        question.className = "container";
-        question_question.type = "text";
-        question_question.className = "form-control"
-        question_question.name = "question" + current_questions_count;
-        question_question.required = true;
-        question_question.placeholder = "Quiz Question";
-        
-        question.append(question_question);
-        $("#questions_block").append(question);
-        current_questions_count += 1;
+    var current_qs_count = 1;
+
+    function count_questions() {
+      current_qs_count = $("#questions_block").children().length;
+    }
+
+
+    function iterate_through_questions() {
+      count_questions();
+      var questions = $("#questions_block").children();
+      for (let i = 0; i < current_qs_count; i++){
+        console.log(questions[i]);
+        $(questions[i]).find(("[name='sn']")).html(i + 1);
+      }
+    }
+
+    function hide_delete_if_only_qs() {
+      if (current_qs_count == 1){
+        $("#questions_block").find(".delete-question").hide();
+      }
+      else if (current_qs_count > 1){
+        $("#questions_block").find(".delete-question").show();
+      } 
+    }
+
+    function add_question() {
+        var new_question = $("#qs_proto").clone(true, true);
+        $("#questions_block").append(new_question);
+        count_questions();
+        hide_delete_if_only_qs();
+        iterate_through_questions();
     };
+
+    $(document).ready( function(){
+      hide_delete_if_only_qs();
+    })
+
+
 </script>
 {% endblock %}
 
@@ -46,26 +68,26 @@
 
       <!-- Questions Block -->
       <div id="questions_block" class="row g-3 my-4">
-        <div class="question-div container" id="question-div-prototype">
+        <div class="question-div container my-3" id="qs_proto">
           <div class="question-header row">
-            <div class="col-md-1 border border-primary" id="q0_sn"><h1>1</h1></div>
-            <div class="col-md-11 border border-primary" id="q0_qs">
-              <input name="q0_qs" type="text" class="form-control question_question no-border" id="q0_qs" placeholder="Question Here" value="" required>
+            <div class="col-md-1 border border-primary"><h1 name="sn">1</h1></div>
+            <div class="col-md-11 border border-primary">
+              <input name="qs_text" type="text" class="form-control question_question no-border" placeholder="Question Here" value="" required>
             </div>
           </div>
 
-          <div class="question-answers row border border-top-0 border-bottom-0 border-primary py-3">
+          <div class="question-answers row border border-primary py-3">
             <div class="col-md-3">
-              <input name="q0_ans0" type="text" class="form-control question_answer border-success" id="q0_ans0" placeholder="Correct Answer Here" value="" required>
+              <textarea name="ans0" type="text" class="form-control question_answer border-success" rows="1" placeholder="Correct Answer Here" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <input name="q0_ans1" type="text" class="form-control question_answer border-danger" id="q0_ans1" placeholder="Wrong Answer 1" value="" required>
+              <textarea name="ans1" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 1" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <input name="q0_ans2" type="text" class="form-control question_answer border-danger" id="q0_ans2" placeholder="Wrong Answer 1" value="" required>
+              <textarea name="ans2" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 2" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <input name="q0_ans3" type="text" class="form-control question_answer border-danger" id="q0_ans3" placeholder="Wrong Answer 1" value="" required>
+              <textarea name="ans3" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 3" value="" required></textarea>
             </div>
           </div>
 
@@ -74,7 +96,6 @@
               <button type="button" class="btn btn-danger my-3"> Delete Question</button>
             </div>
           </div>
-
 
         </div>
       </div>
