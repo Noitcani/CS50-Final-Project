@@ -4,7 +4,20 @@
 Homepage
 {% endblock %}
 
+{% block head_scripts %}
+<script>
+$(document).ready( function(){
+    const newh2 = document.createElement("h2");
+    newh2.innerHTML = "{{session["username"]}}";
+    $("#test_div").append(newh2);
+  })
+</script>
+{% endblock %}
+
 
 {% block main %}
     <h1>Hello World {{session["username"]}}</h1>
+    <div id="test_div">
+
+    </div>
 {% endblock %}

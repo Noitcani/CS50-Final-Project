@@ -4,7 +4,7 @@ import json
 import sqlite3
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import create_all_tables, dict_from_row, invalid_action, login_required
+from helpers import create_all_tables, dict_from_row, invalid_action, login_required, process_create_form_dict
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -121,6 +121,8 @@ def register():
 @login_required
 def create():
     if request.method == "POST":
+        print(request.form.to_dict())
+        process_create_form_dict(request.form.to_dict())
         return redirect("/")
     return render_template("create.html")
 

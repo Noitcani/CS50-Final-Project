@@ -34,3 +34,19 @@ def create_all_tables(cursor):
 
 def dict_from_row(row):
     return dict(zip(row.keys(), row))
+
+
+def process_create_form_dict(request_form_dict: dict):
+    output_dict = {}
+    output_dict['quiz_name'] = request_form_dict['quiz_name']
+    
+    number_of_questions = int((len(request_form_dict) - 1) / 5)
+    
+    for qs in range(number_of_questions):
+        output_dict['q' + str(qs)] = {}
+        output_dict['q' + str(qs)]['qs_text'] = request_form_dict['q' + str(qs) + 'qstext']
+        output_dict['q' + str(qs)]['ans0'] = request_form_dict['q' + str(qs) + 'ans0']
+        output_dict['q' + str(qs)]['ans1'] = request_form_dict['q' + str(qs) + 'ans1']
+        output_dict['q' + str(qs)]['ans2'] = request_form_dict['q' + str(qs) + 'ans2']
+        output_dict['q' + str(qs)]['ans3'] = request_form_dict['q' + str(qs) + 'ans3']
+    print(output_dict)

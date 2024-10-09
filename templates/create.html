@@ -14,31 +14,43 @@
     }
 
 
-    function iterate_through_questions() {
-      count_questions();
+    function change_questions_attr() {
+      console.log(current_qs_count);
       var questions = $("#questions_block").children();
-      for (let i = 0; i < current_qs_count; i++){
-        console.log(questions[i]);
-        $(questions[i]).find(("[name='sn']")).html(i + 1);
+      for (var i = 0; i < current_qs_count; i++){
+        $(questions[i]).attr('id', 'q'+i);
+        $(questions[i]).find("[name='sn']").html(i + 1);
+        $(questions[i]).find(".qs-text").attr('name', 'q'+i+'qstext');
+        $(questions[i]).find(".ans0").attr('name', 'q'+i+'ans0');
+        $(questions[i]).find(".ans1").attr('name', 'q'+i+'ans1');
+        $(questions[i]).find(".ans2").attr('name', 'q'+i+'ans2');
+        $(questions[i]).find(".ans3").attr('name', 'q'+i+'ans3');
+        $(questions[i]).find("[name='delete-qs-button']").attr('onclick', 'delete_qs(q' + i +')');
       }
     }
 
     function hide_delete_if_only_qs() {
       if (current_qs_count == 1){
-        $("#questions_block").find(".delete-question").hide();
+        $("#questions_block").find(".delete-qs-row").hide();
       }
       else if (current_qs_count > 1){
-        $("#questions_block").find(".delete-question").show();
+        $("#questions_block").find(".delete-qs-row").show();
       } 
     }
 
     function add_question() {
-        var new_question = $("#qs_proto").clone(true, true);
+        var new_question = $("#q0").clone(true, true);
+        new_question.find("textarea").val("");
         $("#questions_block").append(new_question);
         count_questions();
         hide_delete_if_only_qs();
-        iterate_through_questions();
-    };
+        change_questions_attr();
+    }
+
+    function delete_qs(question) {
+      $(question).remove();
+      change_questions_attr();
+    }
 
     $(document).ready( function(){
       hide_delete_if_only_qs();
@@ -54,7 +66,7 @@
 </div>
 
 <div class="container text-center" style="align-content: center; max-width: 60%;">
-    <form action="/create" method="post"></form>
+    <form action="/create" method="post">
       <div class="question-name container" style="margin-bottom: 5%;">
         <h2>Qui-ez Name</h2>
         <input name="quiz_name" type="text" class="form-control" id="quiz_name" placeholder="Quiz Name" value="" required>
@@ -68,32 +80,32 @@
 
       <!-- Questions Block -->
       <div id="questions_block" class="row g-3 my-4">
-        <div class="question-div container my-3" id="qs_proto">
+        <div class="question-div container my-3" id="q0">
           <div class="question-header row">
             <div class="col-md-1 border border-primary"><h1 name="sn">1</h1></div>
             <div class="col-md-11 border border-primary">
-              <input name="qs_text" type="text" class="form-control question_question no-border" placeholder="Question Here" value="" required>
+              <textarea name="qs_text" type="text" class="form-control no-border qs-text" rows="1" placeholder="Question Here" value="" required></textarea>
             </div>
           </div>
 
           <div class="question-answers row border border-primary py-3">
             <div class="col-md-3">
-              <textarea name="ans0" type="text" class="form-control question_answer border-success" rows="1" placeholder="Correct Answer Here" value="" required></textarea>
+              <textarea name="ans0" type="text" class="form-control question_answer border-success ans0" rows="1" placeholder="Correct Answer Here" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <textarea name="ans1" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 1" value="" required></textarea>
+              <textarea name="ans1" type="text" class="form-control question_answer border-danger ans1" rows="1" placeholder="Wrong Answer 1" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <textarea name="ans2" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 2" value="" required></textarea>
+              <textarea name="ans2" type="text" class="form-control question_answer border-danger ans2" rows="1" placeholder="Wrong Answer 2" value="" required></textarea>
             </div>
             <div class="col-md-3">
-              <textarea name="ans3" type="text" class="form-control question_answer border-danger" rows="1" placeholder="Wrong Answer 3" value="" required></textarea>
+              <textarea name="ans3" type="text" class="form-control question_answer border-danger ans3" rows="1" placeholder="Wrong Answer 3" value="" required></textarea>
             </div>
           </div>
 
-          <div class="delete-question row">
+          <div class="delete-qs-row row">
             <div class="col border border-primary">
-              <button type="button" class="btn btn-danger my-3"> Delete Question</button>
+              <button type="button" name="delete-qs-button" class="btn btn-danger my-3"> Delete Question</button>
             </div>
           </div>
 
@@ -104,7 +116,7 @@
 
       <hr class="my-4">
 
-      <button class="w-100 btn btn-primary btn-lg my-4" type="submit">Create Qui-ez</button>
+      <input class="w-100 btn btn-primary btn-lg my-4" type="submit" value="Create Qui-ez">
     </form>
   </div>
 {% endblock %}
