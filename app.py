@@ -1,10 +1,11 @@
+import hashlib
 from flask import Flask, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
 import json
 import sqlite3
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import create_all_tables, dict_from_row, invalid_action, login_required, process_create_form_dict
+from helpers import create_all_tables, dict_from_row, invalid_action, login_required, created_quiz_has_no_blanks, process_create_form_dict
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -16,7 +17,10 @@ connection = sqlite3.connect("./databases/quiez.db", check_same_thread=False)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
-# cursor.execute("DROP TABLE users;")
+cursor.execute("DROP TABLE IF EXISTS users;")
+cursor.execute("DROP TABLE IF EXISTS quizes;")
+connection.commit()
+
 create_all_tables(cursor)
 connection.commit()
 
@@ -120,9 +124,24 @@ def register():
 @app.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
+    if not session["user_id"]:
+            return invalid_action("Unauthorized Access", "You need to be logged in")
+    
     if request.method == "POST":
+        if not created_quiz_has_no_blanks(request.form.to_dict()):
+            return invalid_action("Invalid Quiz", "No Quiz field should be blank!")
+
         print(request.form.to_dict())
-        process_create_form_dict(request.form.to_dict())
+        form_dict = process_create_form_dict(request.form.to_dict())
+        quiz_name = form_dict["quiz_name"]
+        number_of_questions = form_dict["number_of_questions"]
+        quiz_dict = str(form_dict)
+        quiz_hash = hashlib.shake_256(quiz_dict.encode()).hexdigest(3)
+        print(quiz_hash)
+
+        cursor.execute("INSERT INTO quizes (quiz_name, number_of_questions, quiz_dict, quiz_code, owner_id) VALUES(?, ?, ?, ?, ?);", [quiz_name, number_of_questions, quiz_dict, quiz_hash, session["user_id"]])
+        connection.commit()
+
         return redirect("/")
     return render_template("create.html")
 

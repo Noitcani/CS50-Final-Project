@@ -21,6 +21,9 @@
 ## More Bootstrap
 - More Bootstrap elements usage
 
+## Different hashing
+- To generate unique quiz code
+
 
 ## venv commands
 ```powershell

@@ -31,16 +31,34 @@ def create_all_tables(cursor):
     
     cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS username ON users(username);")
 
+    cursor.execute("CREATE TABLE IF NOT EXISTS quizes (\
+                        quiz_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+                        quiz_name TEXT NOT NULL,\
+                        number_of_questions INTEGER NOT NULL,\
+                        quiz_dict TEXT NOT NULL,\
+                        quiz_code TEXT NOT NULL,\
+                        owner_id INTEGER NOT NULL,\
+                        FOREIGN KEY (owner_id)\
+                            REFERENCES users(user_id));")
+
 
 def dict_from_row(row):
     return dict(zip(row.keys(), row))
 
 
+def created_quiz_has_no_blanks(request_form_dict: dict):
+    for key in request_form_dict:
+        if request_form_dict[key] == "":
+            return False
+    return True
+
+
 def process_create_form_dict(request_form_dict: dict):
     output_dict = {}
-    output_dict['quiz_name'] = request_form_dict['quiz_name']
-    
     number_of_questions = int((len(request_form_dict) - 1) / 5)
+    
+    output_dict['quiz_name'] = request_form_dict['quiz_name']
+    output_dict['number_of_questions'] = number_of_questions
     
     for qs in range(number_of_questions):
         output_dict['q' + str(qs)] = {}
@@ -49,4 +67,4 @@ def process_create_form_dict(request_form_dict: dict):
         output_dict['q' + str(qs)]['ans1'] = request_form_dict['q' + str(qs) + 'ans1']
         output_dict['q' + str(qs)]['ans2'] = request_form_dict['q' + str(qs) + 'ans2']
         output_dict['q' + str(qs)]['ans3'] = request_form_dict['q' + str(qs) + 'ans3']
-    print(output_dict)
+    return output_dict
