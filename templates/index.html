@@ -18,13 +18,18 @@ Homepage
           <tr>
             <th scope="col" style="width: 50%;">Qui-ez Name</th>
             <th scope="col" style="width: 35%;">Qui-ez Code</th>
-            <th scope="col" style="width: 15%;">Edit</th>
+            <th scope="col" style="width: 10%;">Edit</th>
+            <th scope="col" style="width: 10%;">Delete</th>
           </tr>
         </thead>
         <tbody>
           <tr id="proto-row" style="visibility: collapse;">
             <td scope="col" name="quiz-name"></td>
             <td scope="col" name="quiz-code"></td>
+            <td scope="col">
+              <form action="/edit" method="post">
+                <button class="btn btn-info my-2" type="submit" name="edit-quiz" value="">Edit</button>
+              </form>
             <td scope="col">
               <form action="/delete" method="post">
                 <button class="btn btn-danger my-2" type="submit" name="delete-quiz" value="">Delete</button>
@@ -48,6 +53,7 @@ Homepage
       clone_row.css("visibility", "visible");
       clone_row.find("[name='quiz-name']").html(user_quizes_list[i]["quiz_name"]);
       clone_row.find("[name='quiz-code']").html(user_quizes_list[i]["quiz_code"]);
+      clone_row.find("[name='edit-quiz']").attr("value", user_quizes_list[i]["quiz_code"]);
       clone_row.find("[name='delete-quiz']").attr("value", user_quizes_list[i]["quiz_code"]);
       $("tbody").append(clone_row);
 

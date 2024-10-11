@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit
+{% endblock %}
+
+{% block head_scripts %}
+<script>
+
+    var current_qs_count = 1;
+
+    function count_questions() {
+      current_qs_count = $("#questions_block").children().length;
+    }
+
+
+    function change_questions_attr() {
+      console.log(current_qs_count);
+      var questions = $("#questions_block").children();
+      for (var i = 0; i < current_qs_count; i++){
+        $(questions[i]).attr('id', 'q'+i);
+        $(questions[i]).find("[name='sn']").html(i + 1);
+        $(questions[i]).find(".qs-text").attr('name', 'q'+i+'qstext');
+        $(questions[i]).find(".ans0").attr('name', 'q'+i+'ans0');
+        $(questions[i]).find(".ans1").attr('name', 'q'+i+'ans1');
+        $(questions[i]).find(".ans2").attr('name', 'q'+i+'ans2');
+        $(questions[i]).find(".ans3").attr('name', 'q'+i+'ans3');
+        $(questions[i]).find("[name='delete-qs-button']").attr('onclick', 'delete_qs(q' + i +')');
+      }
+    }
+
+    function hide_delete_if_only_qs() {
+      if (current_qs_count == 1){
+        $("#questions_block").find(".delete-qs-row").hide();
+      }
+      else if (current_qs_count > 1){
+        $("#questions_block").find(".delete-qs-row").show();
+      } 
+    }
+
+    function add_question() {
+        var new_question = $("#q0").clone(true, true);
+        new_question.find("textarea").val("");
+        $("#questions_block").append(new_question);
+        count_questions();
+        hide_delete_if_only_qs();
+        change_questions_attr();
+    }
+
+    function delete_qs(question) {
+      $(question).remove();
+      change_questions_attr();
+    }
+
+    function populate_questions() {
+        $("#quiz_name").val('{{ quiz_name }}')
+        var quiz_dict = {{ quiz_dict | safe }};
+        for (let i = 0; i < {{ number_of_questions }}; i++) {
+            if (i == 0) {
+                $("#q0").find(".qs-text").val(quiz_dict["q" + i]["qs_text"]);
+                $("#q0").find(".ans0").val(quiz_dict["q" + i]["ans0"]);
+                $("#q0").find(".ans1").val(quiz_dict["q" + i]["ans1"]);
+                $("#q0").find(".ans2").val(quiz_dict["q" + i]["ans2"]);
+                $("#q0").find(".ans3").val(quiz_dict["q" + i]["ans3"]);
+                continue;
+            }
+            var question_number = 'q' + i;
+            var new_question = $("#q0").clone(true, true);
+            new_question.find("textarea").val("");
+            new_question.attr('id', 'q'+i);
+            new_question.find("[name='sn']").html(i + 1);
+            new_question.find(".qs-text").attr('name', 'q'+i+'qstext');
+            new_question.find(".qs-text").val(quiz_dict["q" + i]["qs_text"]);
+            new_question.find(".ans0").attr('name', 'q'+i+'ans0');
+            new_question.find(".ans0").val(quiz_dict["q" + i]["ans0"]);
+            new_question.find(".ans1").attr('name', 'q'+i+'ans1');
+            new_question.find(".ans1").val(quiz_dict["q" + i]["ans1"]);
+            new_question.find(".ans2").attr('name', 'q'+i+'ans2');
+            new_question.find(".ans2").val(quiz_dict["q" + i]["ans2"]);
+            new_question.find(".ans3").attr('name', 'q'+i+'ans3');
+            new_question.find(".ans3").val(quiz_dict["q" + i]["ans3"]);
+            new_question.find("[name='delete-qs-button']").attr('onclick', 'delete_qs(q' + i +')');
+            $("#questions_block").append(new_question);          
+        }
+    }
+
+
+    $(document).ready( function(){
+        populate_questions();
+        hide_delete_if_only_qs();
+    })
+
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="container text-center" style="margin-bottom: 3%;">
+    <h1>Create Qui-ez</h1>
+</div>
+
+<div class="container text-center" style="align-content: center; max-width: 60%;">
+    <form action="/save_changes" method="post">
+      <div class="question-name container" style="margin-bottom: 5%;">
+        <h2>Qui-ez Name</h2>
+        <input name="quiz_name" type="text" class="form-control" id="quiz_name" placeholder="Quiz Name" value="" required>
+      </div>
+
+      <hr>
+
+      <div class="container" style="margin-bottom: 5%;">
+        <h2>Questions</h2>
+      </div>
+
+      <!-- Questions Block -->
+      <div id="questions_block" class="row g-3 my-4">
+        <div class="question-div container my-3" id="q0">
+          <div class="question-header row">
+            <div class="col-md-1 border border-primary"><h1 name="sn">1</h1></div>
+            <div class="col-md-11 border border-primary">
+              <textarea name="q0qstext" type="text" class="form-control no-border qs-text" rows="1" placeholder="Question Here" value="" required></textarea>
+            </div>
+          </div>
+
+          <div class="question-answers row border border-primary py-3">
+            <div class="col-md-3">
+              <textarea name="q0ans0" type="text" class="form-control question_answer border-success ans0" rows="1" placeholder="Correct Answer Here" value="" required></textarea>
+            </div>
+            <div class="col-md-3">
+              <textarea name="q0ans1" type="text" class="form-control question_answer border-danger ans1" rows="1" placeholder="Wrong Answer 1" value="" required></textarea>
+            </div>
+            <div class="col-md-3">
+              <textarea name="q0ans2" type="text" class="form-control question_answer border-danger ans2" rows="1" placeholder="Wrong Answer 2" value="" required></textarea>
+            </div>
+            <div class="col-md-3">
+              <textarea name="q0ans3" type="text" class="form-control question_answer border-danger ans3" rows="1" placeholder="Wrong Answer 3" value="" required></textarea>
+            </div>
+          </div>
+
+          <div class="delete-qs-row row">
+            <div class="col border border-primary">
+              <button type="button" name="delete-qs-button" class="btn btn-danger my-3"> Delete Question</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="w-35 btn btn-info btn-lg my-4" type="button" onclick="add_question()">Add Question</button>
+
+      <hr class="my-4">
+
+      <input class="w-100 btn btn-primary btn-lg my-4" type="submit" value="Save Changes">
+    </form>
+  </div>
+{% endblock %}
+
+{% block footer_scripts %}
+{% endblock %}

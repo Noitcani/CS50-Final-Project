@@ -44,7 +44,6 @@ def index():
     user_quizes_list = []
     for quiz in user_quizes:
         user_quizes_list.append({k: quiz[k] for k in quiz.keys()})
-        print(user_quizes_list)
 
     # user_quizes = cursor.execute("SELECT * FROM quizes WHERE owner_id = ?;", session["user_id"])
     return render_template("index.html", user_quizes_list=user_quizes_list)
@@ -169,6 +168,52 @@ def delete():
         cursor.execute("DELETE FROM quizes WHERE quiz_code = ?;", [quiz_code_to_delete])
         connection.commit()
     return redirect("/")
+
+
+@app.route("/edit", methods=["GET", "POST"])
+@login_required
+def edit():
+    if request.method == "POST":
+        quiz_code_to_edit = request.form.get("edit-quiz")
+        session["editing_quiz_code"] = quiz_code_to_edit
+        quiz_data = cursor.execute("SELECT * FROM quizes WHERE quiz_code = ?;", [quiz_code_to_edit]).fetchone()
+        quiz_name = quiz_data["quiz_name"]
+        number_of_questions = quiz_data["number_of_questions"]
+        quiz_dict = quiz_data["quiz_dict"]
+        quiz_dict = eval(quiz_dict)
+        question_list = []
+        for i in range(number_of_questions):
+            question_list.append(quiz_dict["q" + str(i)])
+        return render_template("edit.html", quiz_code_to_edit=quiz_code_to_edit, quiz_name=quiz_name, number_of_questions=number_of_questions, quiz_dict=quiz_dict)
+
+
+@app.route("/save_changes", methods=["GET", "POST"])
+@login_required
+def save_changes():
+    if not session["user_id"]:
+            return invalid_action("Unauthorized Access", "You need to be logged in")
+    
+    if not session["editing_quiz_code"]:
+        return invalid_action("Error", "No quiz selected for edit")
+
+    if request.method == "POST":
+        if not created_quiz_has_no_blanks(request.form.to_dict()):
+            return invalid_action("Invalid Quiz", "No Quiz field should be blank!")
+
+        print(request.form.to_dict())
+        form_dict = process_create_form_dict(request.form.to_dict())
+
+        if not intraquestion_answers_are_unique(form_dict):
+            return invalid_action("Invalid Quiz", "There was a repeated answer in one of the questions")
+
+        quiz_name = form_dict["quiz_name"]
+        number_of_questions = form_dict["number_of_questions"]
+        quiz_dict = str(form_dict)
+
+        cursor.execute("UPDATE quizes SET quiz_name = ?, number_of_questions = ?, quiz_dict = ? WHERE quiz_code = ?;", [quiz_name, number_of_questions, quiz_dict, session["editing_quiz_code"]])
+        connection.commit()
+
+        return redirect("/")
 
 
 if __name__ == "__main__":
