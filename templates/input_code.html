@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Input Qui-ez Code
+{% endblock %}
+
+{% block head_scripts %}
+{% endblock %}
+
+{% block main %}
+<div class="container text-center" style="margin-bottom: 3%;">
+    <h1>Input Qui-ez Code</h1>
+</div>
+
+<div class="container text-center" style="align-content: center; max-width: 60%;">
+    <form action="/input_code" method="post">
+        <input name="quiz_code" type="text" placeholder="Quiz Code Here">
+        <hr class="my-4">
+        <input class="w-50 btn btn-primary btn-lg my-4" type="submit" value="Do Quiz">
+    </form>
+  </div>
+{% endblock %}
+
+{% block footer_scripts %}
+{% endblock %}

@@ -190,10 +190,10 @@ def edit():
 @app.route("/save_changes", methods=["GET", "POST"])
 @login_required
 def save_changes():
-    if not session["user_id"]:
+    if not session.get("user_id"):
             return invalid_action("Unauthorized Access", "You need to be logged in")
     
-    if not session["editing_quiz_code"]:
+    if not session.get("editing_quiz_code"):
         return invalid_action("Error", "No quiz selected for edit")
 
     if request.method == "POST":
@@ -213,7 +213,30 @@ def save_changes():
         cursor.execute("UPDATE quizes SET quiz_name = ?, number_of_questions = ?, quiz_dict = ? WHERE quiz_code = ?;", [quiz_name, number_of_questions, quiz_dict, session["editing_quiz_code"]])
         connection.commit()
 
+        session.pop("editing_quiz_code", None)
+
         return redirect("/")
+
+
+@app.route("/input_code", methods=["GET", "POST"])
+def input_code():
+    if request.method == "POST":
+        quiz_code_input = request.form.get("quiz_code")
+        rows = cursor.execute("SELECT * FROM quizes WHERE quiz_code = ?;", [quiz_code_input]).fetchall()
+        if len(rows) != 1:
+            return invalid_action("Invalid Quiz Code", "No Qui-ez associated with Code Entered.")
+        
+        quiz_data = rows[0]
+        quiz_name = quiz_data["quiz_name"]
+        number_of_questions = quiz_data["number_of_questions"]
+        quiz_dict = quiz_data["quiz_dict"]
+        quiz_dict = eval(quiz_dict)
+        question_list = []
+        for i in range(number_of_questions):
+            question_list.append(quiz_dict["q" + str(i)])
+        return render_template("do.html", quiz_code_input=quiz_code_input, quiz_name=quiz_name, number_of_questions=number_of_questions, quiz_dict=quiz_dict)
+        
+    return render_template("input_code.html")
 
 
 if __name__ == "__main__":
