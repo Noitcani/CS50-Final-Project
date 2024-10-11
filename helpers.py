@@ -68,3 +68,17 @@ def process_create_form_dict(request_form_dict: dict):
         output_dict['q' + str(qs)]['ans2'] = request_form_dict['q' + str(qs) + 'ans2']
         output_dict['q' + str(qs)]['ans3'] = request_form_dict['q' + str(qs) + 'ans3']
     return output_dict
+
+
+def intraquestion_answers_are_unique(processed_dict):
+    for key in processed_dict:
+        if key not in ['quiz_name', 'number_of_questions']:
+            for question in processed_dict[key]:
+                answer_set = set([processed_dict[key]['ans0'], processed_dict[key]['ans1'], processed_dict[key]['ans2'], processed_dict[key]['ans3'],])
+                if len(answer_set) < 4:
+                    return False
+    return True
+
+
+def to_caps(data):
+    return str(data).capitalize()

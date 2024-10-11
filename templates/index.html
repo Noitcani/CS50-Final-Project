@@ -5,19 +5,68 @@ Homepage
 {% endblock %}
 
 {% block head_scripts %}
-<script>
-$(document).ready( function(){
-    const newh2 = document.createElement("h2");
-    newh2.innerHTML = "{{session["username"]}}";
-    $("#test_div").append(newh2);
-  })
-</script>
 {% endblock %}
 
 
 {% block main %}
-    <h1>Hello World {{session["username"]}}</h1>
-    <div id="test_div">
-
+  <div class="container-md text-center">
+    <h1 class="mb-3">Welcome, {{session["username"] | to_caps }}</h1>
+    <h2>Your Qui-ezs</h2>
+    <div class="container">
+      <table class="table table-bordered table-striped my-3">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" style="width: 50%;">Qui-ez Name</th>
+            <th scope="col" style="width: 35%;">Qui-ez Code</th>
+            <th scope="col" style="width: 15%;">Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="proto-row" style="visibility: collapse;">
+            <td scope="col" name="quiz-name"></td>
+            <td scope="col" name="quiz-code"></td>
+            <td scope="col">
+              <form action="/delete" method="post">
+                <button class="btn btn-danger my-2" type="submit" name="delete-quiz" value="">Delete</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+{% endblock %}
+
+{% block footer_scripts %}
+<script>
+  var user_quizes_list = {{ user_quizes_list | safe }};
+  
+  function populate_user_quizes() {
+    for (let i = 0; i < user_quizes_list.length; i++) {
+      var clone_row = $("#proto-row").clone(true, true);
+      clone_row.attr("id", "q"+i);
+      clone_row.css("visibility", "visible");
+      clone_row.find("[name='quiz-name']").html(user_quizes_list[i]["quiz_name"]);
+      clone_row.find("[name='quiz-code']").html(user_quizes_list[i]["quiz_code"]);
+      clone_row.find("[name='delete-quiz']").attr("value", user_quizes_list[i]["quiz_code"]);
+      $("tbody").append(clone_row);
+
+
+      console.log(user_quizes_list[i]);
+      console.log(clone_row.find("[name='delete-quiz']"));
+    } 
+  }
+
+  function delete_row(row_id) {
+    console.log("hi")
+    $(row_id).remove();
+  }
+
+
+  $(document).ready( function() {
+    console.log('hi');
+    populate_user_quizes();
+  });
+
+</script>
 {% endblock %}

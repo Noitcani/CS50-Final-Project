@@ -5,11 +5,13 @@ import json
 import sqlite3
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import create_all_tables, dict_from_row, invalid_action, login_required, created_quiz_has_no_blanks, process_create_form_dict
+from helpers import create_all_tables, dict_from_row, invalid_action, login_required, created_quiz_has_no_blanks, process_create_form_dict, intraquestion_answers_are_unique, to_caps
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
+
+app.jinja_env.filters['to_caps'] = to_caps
 
 Session(app)
 
@@ -17,9 +19,9 @@ connection = sqlite3.connect("./databases/quiez.db", check_same_thread=False)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
-cursor.execute("DROP TABLE IF EXISTS users;")
-cursor.execute("DROP TABLE IF EXISTS quizes;")
-connection.commit()
+# cursor.execute("DROP TABLE IF EXISTS users;")
+# cursor.execute("DROP TABLE IF EXISTS quizes;")
+# connection.commit()
 
 create_all_tables(cursor)
 connection.commit()
@@ -37,7 +39,15 @@ def after_request(response):
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    return render_template("index.html")
+    user_quizes = cursor.execute("SELECT * FROM quizes WHERE owner_id = ?;", [session["user_id"]]).fetchall()
+
+    user_quizes_list = []
+    for quiz in user_quizes:
+        user_quizes_list.append({k: quiz[k] for k in quiz.keys()})
+        print(user_quizes_list)
+
+    # user_quizes = cursor.execute("SELECT * FROM quizes WHERE owner_id = ?;", session["user_id"])
+    return render_template("index.html", user_quizes_list=user_quizes_list)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -133,6 +143,11 @@ def create():
 
         print(request.form.to_dict())
         form_dict = process_create_form_dict(request.form.to_dict())
+
+        if not intraquestion_answers_are_unique(form_dict):
+            return invalid_action("Invalid Quiz", "There was a repeated answer in one of the questions")
+
+
         quiz_name = form_dict["quiz_name"]
         number_of_questions = form_dict["number_of_questions"]
         quiz_dict = str(form_dict)
@@ -144,6 +159,16 @@ def create():
 
         return redirect("/")
     return render_template("create.html")
+
+
+@app.route("/delete", methods=["GET", "POST"])
+@login_required
+def delete():
+    if request.method == "POST":
+        quiz_code_to_delete = request.form.get("delete-quiz")
+        cursor.execute("DELETE FROM quizes WHERE quiz_code = ?;", [quiz_code_to_delete])
+        connection.commit()
+    return redirect("/")
 
 
 if __name__ == "__main__":
