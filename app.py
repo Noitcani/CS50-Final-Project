@@ -239,5 +239,42 @@ def input_code():
     return render_template("input_code.html")
 
 
+@app.route("/submit_answers", methods=["GET", "POST"])
+def submit_answers():
+    form_dict = request.form.to_dict()
+
+    rows = cursor.execute("SELECT * FROM quizes WHERE quiz_code = ?;", [form_dict["quiz_code"]]).fetchall()
+    quiz_data = rows[0]
+    quiz_name = quiz_data["quiz_name"]
+    number_of_questions = quiz_data["number_of_questions"]
+    quiz_dict = quiz_data["quiz_dict"]
+    quiz_dict = eval(quiz_dict)
+    number_of_corrects = 0
+
+    ## Verify number of answers submitted
+    answers_submitted_count = 0
+    for key in form_dict.keys():
+        if key != "quiz_code":
+            answers_submitted_count += 1
+    if answers_submitted_count != number_of_questions:
+        return invalid_action("Invalid Quiz Submission", "Number of answers submitted did not match quiz length.")
+
+    ## Generate matched-answers list
+    matched_answers_list = []
+    for i in range(number_of_questions):
+        submitted_answer = form_dict["q" + str(i) + "ans"]
+        correct_answer = quiz_dict["q" + str(i)]["ans0"]
+        if submitted_answer == correct_answer:
+            answer_status = "Correct"
+            number_of_corrects += 1
+        else:
+            answer_status = "Wrong"
+        
+        matched_answers_list.append([submitted_answer, correct_answer, answer_status])
+
+    ## Render results page
+    return render_template("display_results.html", quiz_name=quiz_name, matched_answers_list=matched_answers_list, number_of_corrects=number_of_corrects, number_of_questions=number_of_questions)
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

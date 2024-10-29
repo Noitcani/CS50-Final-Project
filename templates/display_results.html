@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block head_scripts %}
+<script>
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="container text-center" style="margin-bottom: 3%;">
+    <h1>Results for your answers to</h1>
+    <h2> {{ quiz_name }} </h2>
+</div>
+
+<div class="container">
+  <table class="table text-center table-bordered table-striped my-3">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col" style="width: 10%;">Qs No.</th>
+        <th scope="col" style="width: 40%;">Question</th>
+        <th scope="col" style="width: 25%;">Submitted Answer</th>
+        <th scope="col" style="width: 25%;">Correct Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+
+{% endblock %}
+
+{% block footer_scripts %}
+{% endblock %}
