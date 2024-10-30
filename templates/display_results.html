@@ -6,17 +6,55 @@
 
 {% block head_scripts %}
 <script>
+
+  function populate_results() {
+    var quiz_name = "{{ quiz_name }}";
+    var matched_answers_list = {{ matched_answers_list | safe}};
+    var number_of_questions = {{ number_of_questions }};
+    console.log(matched_answers_list);
+    
+    for (let i=0; i<number_of_questions; i++) {
+      question_data = matched_answers_list[i];
+      var question_result_row = $('<tr></tr>');
+      var question_number = $('<td>'+ (i + 1) + '</td>');
+      var question_text = $('<td>'+ question_data[0] + '</td>');
+      var submitted_answer = $('<td>'+ question_data[1] + '</td>');
+      var correct_answer = $('<td>'+ question_data[2] + '</td>');
+      question_result_row.append(question_number);
+      question_result_row.append(question_text);
+      question_result_row.append(submitted_answer);
+      question_result_row.append(correct_answer);
+      
+      if (question_data[3] == "Correct") {
+        submitted_answer.css("background-color", "#ebfac8");
+      }
+      else {
+        submitted_answer.css("background-color", "#fac8de");
+      }
+
+      $('#result-body').append(question_result_row);
+    } 
+  }
+
+  $(document).ready( function(){
+    populate_results();
+    })
+
 </script>
 {% endblock %}
 
 {% block main %}
 <div class="container text-center" style="margin-bottom: 3%;">
-    <h1>Results for your answers to</h1>
     <h2> {{ quiz_name }} </h2>
+</div>
+<hr>
+<div class="container text-center"> 
+  <h2>Results:</h2>
+  <h2> {{ number_of_corrects }} / {{ number_of_questions }} </h2>
 </div>
 
 <div class="container">
-  <table class="table text-center table-bordered table-striped my-3">
+  <table class="table text-center table-bordered my-3">
     <thead class="table-dark">
       <tr>
         <th scope="col" style="width: 10%;">Qs No.</th>
@@ -25,7 +63,7 @@
         <th scope="col" style="width: 25%;">Correct Answer</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="result-body">
     </tbody>
   </table>
 </div>

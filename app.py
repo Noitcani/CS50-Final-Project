@@ -19,6 +19,7 @@ connection = sqlite3.connect("./databases/quiez.db", check_same_thread=False)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
+## WARNING: Code Block to Reset DB ##
 # cursor.execute("DROP TABLE IF EXISTS users;")
 # cursor.execute("DROP TABLE IF EXISTS quizes;")
 # connection.commit()
@@ -262,6 +263,7 @@ def submit_answers():
     ## Generate matched-answers list
     matched_answers_list = []
     for i in range(number_of_questions):
+        question_text = quiz_dict["q" + str(i)]['qs_text']
         submitted_answer = form_dict["q" + str(i) + "ans"]
         correct_answer = quiz_dict["q" + str(i)]["ans0"]
         if submitted_answer == correct_answer:
@@ -270,7 +272,7 @@ def submit_answers():
         else:
             answer_status = "Wrong"
         
-        matched_answers_list.append([submitted_answer, correct_answer, answer_status])
+        matched_answers_list.append([question_text, submitted_answer, correct_answer, answer_status])
 
     ## Render results page
     return render_template("display_results.html", quiz_name=quiz_name, matched_answers_list=matched_answers_list, number_of_corrects=number_of_corrects, number_of_questions=number_of_questions)
