@@ -1,5 +1,6 @@
 # Personality Quiz Creation Platform
 - (CS50x Final Project) for YJ TEO
+https://youtu.be/ImrTKvzQCI8
 
 
 ## Introduction
@@ -35,6 +36,7 @@
 - Explored `venv` for project
 - To manage dependencies
 - To allow for real-time Debug, for updating of Python Flask App on change
+
 ```powershell
 set-executionpolicy -scope currentuser remotesigned
 .\quiez_app\Scripts\activate

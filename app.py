@@ -19,7 +19,7 @@ connection = sqlite3.connect("./databases/quiez.db", check_same_thread=False)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
-## WARNING: Code Block to Reset DB ##
+# # WARNING: Code Block to Reset DB ##
 # cursor.execute("DROP TABLE IF EXISTS users;")
 # cursor.execute("DROP TABLE IF EXISTS quizes;")
 # connection.commit()
